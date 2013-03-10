@@ -1,7 +1,170 @@
 INCLUDE "constants.asm"
 
 SECTION "bank0",HOME
-INCBIN "baserom.gbc",$0,$3000
+INCBIN "baserom.gbc",$0,$b65
+
+ShowMenuText: ; $b65
+	call $02bf
+	push hl
+MenuReadChar: ; $0b69
+	pop hl
+	ld a, [hli]
+	push hl
+	cp $f0
+	jp nc, MenuF
+	cp $e0
+	jp nc, MenuE
+	jp MenuRegular
+	ret
+; 0xb7a
+
+INCBIN "baserom.gbc",$b7a,$b96-$b7a
+
+MenuE:
+	ld de, $0ba4
+	sub $e0
+	ld l, a
+	ld h, $0
+	add hl, hl
+	add hl, de
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+	jp [hl]
+; 0xba4
+
+MenuEPointers:
+    dw MenuNothing
+    dw $bc7
+    dw $bec
+    dw MenuNothing
+    dw $b7a
+    dw $c33
+    dw $c17
+    dw $c6a
+    dw $c42
+    dw $c51
+    dw MenuNothing
+    dw MenuNothing
+    dw $bfe
+    dw $b7a
+    dw MenuNothing
+    dw MenuNothing
+
+MenuNothing: ; $bc4
+    jp MenuReadChar
+
+; $bc7
+
+INCBIN "baserom.gbc",$bc7,$0c8d-$bc7
+
+MenuF: ; c8d
+	call $1a0e
+	jp MenuReadChar
+
+MenuRegular: ; c93
+	ld [W_CHAR], a
+	ld a, [$dce0]
+	ld c, a
+	ld a, [$d08b]
+	add c
+	ld c, a
+	ld [$cbf3], a
+	swap a
+	ld b, a
+	and $f
+	cp $8
+	jr nc, .asm_caf ; 0xca9 $4
+	or $90
+	jr .asm_cb1 ; 0xcad $2
+.asm_caf
+	or $80
+.asm_cb1
+	ld [$d0f7], a
+	ld a, b
+	and $f0
+	ld [$d0f6], a
+	ld a, [$dcd1]
+	ld e, a
+	ld a, [$dcd2]
+	ld d, a
+	ld a, [W_CHAR]
+	ld l, a
+	ld h, $0
+	add hl, hl
+	add hl, hl
+	add hl, hl
+	add hl, hl
+	add hl, hl
+	add hl, de
+	ld a, l
+	ld [$d9c0], a
+	ld a, h
+	ld [$d9c1], a
+	ld a, $4
+	ld [$cbf2], a
+	ld a, $1
+	ld [$cbf5], a
+	call $02bf
+	ld a, [$d08c]
+	ld c, a
+	ld a, [$dce0]
+	add $4
+	ld [$dce0], a
+	cp c
+	jp c, $0b69
+	xor a
+	ld [$dce0], a
+	jp MenuReadChar
+
+; 0xcfa
+
+
+
+INCBIN "baserom.gbc",$cfa,$19ca-$cfa
+
+ShowText:
+	ld a, [$ffbc]
+	cp $1
+	jr z, .asm_19e1 ; 0x19ce $11
+	cp $2
+	jr z, .asm_19e5 ; 0x19d2 $11
+	cp $3
+	jr z, .asm_19e9 ; 0x19d6 $11
+	cp $4
+	jr z, .asm_19ed ; 0x19da $11
+	cp $5
+	jr z, .asm_19f1 ; 0x19de $11
+	ret
+.asm_19e1
+	ld a, [$ffb6]
+	jr .asm_19f6 ; 0x19e3 $11
+.asm_19e5
+	ld a, [$ffc0]
+	jr .asm_19f6 ; 0x19e7 $d
+.asm_19e9
+	ld a, [$ffc3]
+	jr .asm_19f6 ; 0x19eb $9
+.asm_19ed
+	ld a, [$ffb7]
+	jr .asm_19f6 ; 0x19ef $5
+.asm_19f1
+	ld a, [$dcb5]
+	jr .asm_19f6 ; 0x19f4 $0
+.asm_19f6
+	rst $20
+	push hl
+	pop hl
+	ld a, [hli]
+	push hl
+	cp $f0
+	jp nc, $1a08
+	cp $e0
+	jp nc, $1b23
+	jp $1a2b
+; 0x1a08
+
+INCBIN "baserom.gbc",$1a08,$3000-$1a08
 
 SECTION "bank1",DATA,BANK[$1]
 INCBIN "baserom.gbc", $4000,$3fff
@@ -465,11 +628,11 @@ INCBIN "baserom.gbc", $1cc000,$3fff
 
 SECTION "bank74",DATA,BANK[$74]
 INCBIN "baserom.gbc", $1d0000,$3fff
-    db $75 ; bank, wrong
+    db $0
 
 SECTION "bank75",DATA,BANK[$75]
 INCBIN "baserom.gbc", $1d4000,$3fff
-    db $75 ; bank
+    db $0
 
 SECTION "bank76",DATA,BANK[$76]
 INCBIN "baserom.gbc", $1d8000,$3fff
