@@ -166,6 +166,7 @@ ShowText:
 
 INCBIN "baserom.gbc",$1a08,$3000-$1a08
 
+
 SECTION "bank1",DATA,BANK[$1]
 INCBIN "baserom.gbc", $4000,$3fff
     db $1 ; bank
@@ -336,11 +337,11 @@ INCBIN "baserom.gbc", $90000,$90130-$90000
     dw $453f
     dw $4304
     db $01
-    dw $60a9 ; menu?
+    dw $60a9
 
 
 
-INCBIN "baserom.gbc", $90166,$93fff-$90166
+INCBIN "baserom.gbc", $90165,$93fff-$90165
     db $24 ; bank
 
 SECTION "bank25",DATA,BANK[$25]
