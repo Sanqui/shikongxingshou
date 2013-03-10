@@ -334,9 +334,9 @@ INCBIN "baserom.gbc", $90000,$90130-$90000
     dw $449d
     dw $4509
     dw $453f
-    dw $4304 ; menu
-    dw $a901
-    dw $a960
+    dw $4304
+    db $01
+    dw $60a9 ; menu?
 
 
 
