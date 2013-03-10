@@ -166,6 +166,7 @@ ShowText:
 
 INCBIN "baserom.gbc",$1a08,$3000-$1a08
 
+
 SECTION "bank1",DATA,BANK[$1]
 INCBIN "baserom.gbc", $4000,$3fff
     db $1 ; bank
@@ -307,7 +308,40 @@ INCBIN "baserom.gbc", $8c000,$3fff
     db $23 ; bank
 
 SECTION "bank24",DATA,BANK[$24]
-INCBIN "baserom.gbc", $90000,$3fff
+INCBIN "baserom.gbc", $90000,$90130-$90000
+
+; these seem to be pointers for the following bank (25).  menus?
+    dw $4162
+    dw $4162
+    dw $4181
+    dw $41b7
+    dw $41cb
+    dw $41e3
+    dw $41ec
+    dw $420a
+    dw $4208
+    dw $42a5
+    dw $42bb
+    dw $42cb
+    dw $42fa
+    dw $430e
+    dw $432e
+    dw $4343
+    dw $4355
+    dw $438b
+    dw $43af
+    dw $4404
+    dw $4421
+    dw $449d
+    dw $4509
+    dw $453f
+    dw $4304
+    db $01
+    dw $60a9
+
+
+
+INCBIN "baserom.gbc", $90165,$93fff-$90165
     db $24 ; bank
 
 SECTION "bank25",DATA,BANK[$25]
