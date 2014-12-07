@@ -48,7 +48,7 @@ MenuEPointers:
     dw MenuNothing
     dw $bfe
     dw $b7a
-    dw MenuNothing
+    dw MenuLatin ; $ee
     dw MenuNothing
 
 MenuNothing: ; $bc4
@@ -62,7 +62,7 @@ MenuF: ; c8d
 	call $1a0e
 	jp MenuReadChar
 
-MenuRegular: ; c93
+MenuRegularOld: ; c93
 	ld [W_CHAR], a
 	ld a, [$dce0]
 	ld c, a
@@ -162,9 +162,97 @@ ShowText:
 	cp $e0
 	jp nc, $1b23
 	jp $1a2b
+	
 ; 0x1a08
 
 INCBIN "baserom.gbc",$1a08,$3000-$1a08
+
+LatinTiles:
+    INCBIN "gfx/tiles.gb"
+
+MenuLatin:
+    ld a, 1
+    ld [H_LATIN], a
+	jp MenuReadChar
+    
+MenuRegular:
+    push af
+    ld a, [H_LATIN]
+    and a
+    jr nz, .latin
+.chinese
+    pop af
+    jp MenuRegularOld
+.latin
+    pop af
+	
+	call WriteChar
+	;ld a, 0
+	;call WriteChar
+	
+	jp MenuReadChar
+    
+WriteChar:
+	ld [W_CHAR], a
+	
+	
+	ld a, [$dce0]
+	ld c, a
+	ld a, [$d08b]
+	add c
+	ld c, a
+	ld [$cbf3], a
+	swap a
+	ld b, a
+	and $f
+	cp $8
+	jr nc, .asm_caf ; 0xca9 $4
+	or $90
+	jr .asm_cb1 ; 0xcad $2
+.asm_caf
+	or $80
+.asm_cb1
+	ld [$d0f7], a
+	ld a, b
+	and $f0
+	ld [$d0f6], a
+	
+	ld a, [W_CHAR]
+    ld h, 0
+    ld l, a
+	ld de, LatinTiles
+	add hl, hl
+	add hl, hl
+	add hl, hl
+	add hl, hl
+	add hl, de
+	
+	ld a, l
+	ld [$d9c0], a
+	ld a, h
+	ld [$d9c1], a
+	ld a, $2
+	ld [$cbf2], a
+	ld a, $1
+	ld [$cbf5], a
+	call $02bf
+		
+	ld a, [$d08c]
+	ld c, a
+	ld a, [$dce0]
+	add $2
+	ld [$dce0], a
+
+	ret
+
+NewMenu:
+    db $ee
+    db "Mons"
+    db "Item"
+    db "Part"
+    db "Dex", $0
+    db "Save"
+    db $e4
 
 
 SECTION "bank1",DATA,BANK[$1]
@@ -337,7 +425,7 @@ INCBIN "baserom.gbc", $90000,$90130-$90000
     dw $453f
     dw $4304
     db $01
-    dw $60a9
+    dw NewMenu
 
 
 

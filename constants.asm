@@ -68,3 +68,5 @@ rIE EQU $ffff ; Interrupt Enable (R/W)
 
 
 W_CHAR EQU $db1e
+
+H_LATIN EQU $fff0
